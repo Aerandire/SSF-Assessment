@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import ssf.assess.SSFAssessment.model.Quotation;
@@ -69,8 +70,10 @@ public class QuotationService {
                 for (int i=0;i<returnQuote.size();i++){               
                     //Adding each element of JSON array into ArrayList 
                     String item = returnQuote.getJsonObject(i).getString("item");
-                    Float unitP = (float)returnQuote.getJsonObject(i).getInt("unitPrice");
-                    q.addQuotation(item, unitP);  
+                    String unitP = returnQuote.getJsonObject(i).get("unitPrice").toString();
+                    Float unitPf = Float.parseFloat(unitP);
+                    System.out.printf(">>>>>> price: %s\n", unitPf);
+                    q.addQuotation(item, unitPf);  
                 }   
             } 
 

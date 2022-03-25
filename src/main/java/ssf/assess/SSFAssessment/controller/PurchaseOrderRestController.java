@@ -79,7 +79,7 @@ public class PurchaseOrderRestController {
                 
                 Float cost = price * qty;
 
-                total += cost;              
+                total = total + cost;              
             }
             System.out.printf(">>>>>> Total Cost: %s\n", total);
 
