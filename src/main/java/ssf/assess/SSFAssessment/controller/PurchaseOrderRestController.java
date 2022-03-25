@@ -47,34 +47,56 @@ public class PurchaseOrderRestController {
             System.out.printf(">>>>>> jsonArray: %s\n", jsonArray.toString());
             
             List<String> items = new ArrayList<>();
+            List<Integer> itemQty = new ArrayList<>(); 
 
             if (jsonArray != null) {      
                 //Iterating JSON array  
                 for (int i=0;i<jsonArray.size();i++){               
                     //Adding each element of JSON array into ArrayList  
-                    items.add(jsonArray.getJsonObject(i).getString("item"));  
+                    items.add(jsonArray.getJsonObject(i).getString("item"));
+                    itemQty.add(jsonArray.getJsonObject(i).getInt("quantity"));
                 }   
             } 
             //Checking that items are collected
             System.out.printf(">>>>>> Test Item: %s\n", items);
 
             Optional<Quotation> opt = quoteSvc.getQuotations(items);
-            System.out.printf(">>>>>> POST: %s\n", opt.get());
+            Quotation quotes = opt.get();
+
+            String invoiceId = quotes.getQuoteId();
+            List<Float> quoteP = new ArrayList<>();
+            
+            for (int i=0;i<items.size();i++){               
+                //Adding each element of JSON array into ArrayList  
+                quoteP.add(quotes.getQuotation(items.get(i)));         
+            }
+
+            Float total = 0f;
+
+            for (int i=0;i<items.size();i++){               
+                Float price = quoteP.get(i);
+                Integer qty = itemQty.get(i);
+                
+                Float cost = price * qty;
+
+                total += cost;              
+            }
+            System.out.printf(">>>>>> Total Cost: %s\n", total);
 
             String name = req.getString("name");
+            builder.add("invoiceId", invoiceId);
             builder.add("name", name);
+            builder.add("total",total);
 
         } catch (IllegalArgumentException ex) {
             ex.printStackTrace();
             throw ex;
         } catch (Exception ex) {
             JsonObject result = Json.createObjectBuilder()
-                .add("error", ex.getMessage())
+                .add("","")
                 .build();
             return ResponseEntity.status(400).body(result.toString());
-        } 
-
-        
+        }     
 
         return ResponseEntity.ok(builder.build().toString());
     }
