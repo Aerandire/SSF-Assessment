@@ -16,7 +16,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
-import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import ssf.assess.SSFAssessment.model.Quotation;
