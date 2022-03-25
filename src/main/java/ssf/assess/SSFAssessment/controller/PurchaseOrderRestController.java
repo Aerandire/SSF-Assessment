@@ -4,7 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,11 +19,17 @@ import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonReader;
+import ssf.assess.SSFAssessment.model.Quotation;
+import ssf.assess.SSFAssessment.services.QuotationService;
 
 
 @RestController
 @RequestMapping(path="/api")
 public class PurchaseOrderRestController {
+
+    @Autowired
+    private QuotationService quoteSvc;
+
     
     @PostMapping(path="/po", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> postPO(@RequestBody String payload){
@@ -50,6 +58,9 @@ public class PurchaseOrderRestController {
             //Checking that items are collected
             System.out.printf(">>>>>> Test Item: %s\n", items);
 
+            Optional<Quotation> opt = quoteSvc.getQuotations(items);
+            System.out.printf(">>>>>> POST: %s\n", opt.get());
+
             String name = req.getString("name");
             builder.add("name", name);
 
@@ -62,6 +73,9 @@ public class PurchaseOrderRestController {
                 .build();
             return ResponseEntity.status(400).body(result.toString());
         } 
+
+        
+
         return ResponseEntity.ok(builder.build().toString());
     }
 
